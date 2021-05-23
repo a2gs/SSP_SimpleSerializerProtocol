@@ -17,12 +17,12 @@ RANLIB = ranlib
 CPPCHECK = cppcheck
 
 INCLUDEPATH = -I./
-LIBS = 
+LIBS = -lssp
 LIBPATH = -L./
 
-all: clean exectag
+all: clean libssp
 
-exectag:
+libssp:
 	@echo
 	@echo "=== Code sanitizing =============="
 	-ctags -R *
@@ -30,10 +30,18 @@ exectag:
 	-$(CPPCHECK) --enable=all --std=$(CVERSION) --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem .
 
 	@echo
+	@echo "=== libssp ================="
+	$(CC) -o ssp.o -c ssp.c -lpthread -lrt $(CFLAGS)
+	$(AR) rc libssp.a ssp.o
+	$(RANLIB) libssp.a
+	-$(RM) ssp.o
+
+sample: libssp
+	@echo
 	@echo "=== Compiling =============="
-	$(CC) -o sample sample.c ssp.c $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
+	$(CC) -o sample sample.c $(CFLAGS) $(INCLUDEPATH) $(LIBPATH) $(LIBS)
 
 clean:
 	@echo
 	@echo "=== clean_data =============="
-	-$(RM) sample core tags cscope.out
+	-$(RM) sample core tags cscope.out libssp.a *.o
