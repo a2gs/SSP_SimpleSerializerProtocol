@@ -1,3 +1,12 @@
+/* Andre Augusto Giannotti Scota (a2gs)
+ * andre.scota@gmail.com
+ * https://sites.google.com/view/a2gs
+ *
+ * SSP - SimpleSerializerProtocol
+ *
+ * MIT License
+ */
+
 #include <stddef.h>
 #include <string.h>
 #include "ssp.h"
