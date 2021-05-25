@@ -9,6 +9,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <stdint.h>
 #include "ssp.h"
 
 /*
@@ -18,10 +19,6 @@ ID
 2 - float
 3 - date
  
-2bytes4bytes|BITMAP|2bytes4bytes...|
-VERSIONfull_sz|BITMAP|IdSszabcde|IdSzabcde|IdSzabcde
-
-
 2bytes4bytes|4Bytes2bytes4bytes...|
 VERSIONfull_sz|TagIdSszabcde|TagIdSzabcde|TagIdSzabcde
 
@@ -57,56 +54,49 @@ int sspStartToNet(ssp_t *ssp)
 	return(SSP_OK);
 }
 
-/* ================================== */
-
-int stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz)
+int sspCloseToNet(ssp_t *ssp)
 {
-	return(0);
-}
-
-int stringFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz)
-{
-	return(0);
-}
-
-int charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz)
-{
-	return(0);
-}
-
-int charByeFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz)
-{
-	return(0);
-}
-
-int floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz)
-{
-	return(0);
-}
-
-int floatFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz)
-{
-	return(0);
-}
-
-int integerToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz)
-{
-	return(0);
-}
-
-int integerFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz)
-{
-	return(0);
+	/* write the size (ssp->msg[msgSz] - ssp->msg), if < smgMaxLen */
+	return(SSP_OK);
 }
 
 /* ================================== */
 
-int pack(unsigned int id, void *dataIn, size_t *dataInSz)
+/* #include <netinet/in.h>
+ * #include <arpa/inet.h> >>>>
+ *
+ * uint32_t htonl(uint32_t hostlong);
+ * uint16_t htons(uint16_t hostshort);
+ * uint32_t ntohl(uint32_t netlong);
+ * uint16_t ntohs(uint16_t netshort);
+ *
+ */
+
+int writeFmtIdAndData(ssp_t *ssp, unsigned int fmtId)
 {
-	return(0);
+	uint16_t sz = 0;
+
+	return(SSP_OK);
 }
 
-int unpack(unsigned int id, void *dataOut, size_t dataOutSz)
+int pack(ssp_t *ssp, unsigned int id, void *dataIn, size_t *dataInSz)
+{
+	unsigned int i = 0;
+
+	for(i = 0; i <= ssp->qtdFmt; i++){
+		if(ssp->format[i].id == id){
+			if(writeFmtIdAndData(ssp, i) == SSP_ERROR){
+				return(SSP_ERROR);
+			}
+
+			return(SSP_OK);
+		}
+	}
+
+	return(SSP_ERROR);
+}
+
+int unpack(ssp_t *ssp, unsigned int id, void *dataOut, size_t dataOutSz)
 {
 	return(0);
 }

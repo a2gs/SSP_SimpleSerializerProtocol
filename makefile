@@ -32,7 +32,8 @@ libssp:
 	@echo
 	@echo "=== libssp ================="
 	$(CC) -o ssp.o -c ssp.c -lpthread -lrt $(CFLAGS)
-	$(AR) rc libssp.a ssp.o
+	$(CC) -o sspDefaultFormats.o -c sspDefaultFormats.c -lpthread -lrt $(CFLAGS)
+	$(AR) rc libssp.a ssp.o sspDefaultFormats.o
 	$(RANLIB) libssp.a
 	-$(RM) ssp.o
 

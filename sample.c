@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <stddef.h>
 #include "ssp.h"
+#include "sspDeafultFormats.h"
 
 typedef struct _myType_t{
 	int a;
@@ -17,12 +18,12 @@ typedef struct _myType_t{
 	double c;
 }myType_t;
 
-int myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz)
+int myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz, size_t *proc)
 {
 	return(0);
 }
 
-int myTypeFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz)
+int myTypeFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
@@ -32,11 +33,11 @@ int myTypeFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t
 int main(int argc, char *argv[])
 {
 	sspFmt_t myFmt[] = {
-		{1, stringToNet,   stringFromNet},
-		{2, charByteToNet, charByeFromNet},
-		{2, myTypeToNet,   myTypeFromNet},
-		{4, floatToNet,    floatFromNet},
-		{5, integerToNet,  integerFromNet}
+		{1, stringToNet,    stringFromNet},
+		{2, charByteToNet,  charByeFromNet},
+		{2, myTypeToNet,    myTypeFromNet},
+		{4, float32ToNet,   float32FromNet},
+		{5, integer32ToNet, integer32FromNet}
 	};
 	ssp_t myProto;
 	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
@@ -45,5 +46,38 @@ int main(int argc, char *argv[])
 
 	sspStartToNet(&myProto);
 
+	sspStartFetch(ssp);
+
+	/*
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	sspPack(....);
+	*/
+
+	sspCloseToNet(ssp);
+
+	/*
+	send(ssp->msg);
+
+	reset ssp to receive (empty ssp->msg)
+
+	sspStartFetch(ssp_t *ssp)
+
+	sspUnpack(....);
+	sspUnpack(....);
+	sspUnpack(....);
+	sspUnpack(....);
+	sspUnpack(....);
+	*/
+
+	return(SSP_OK);
+}
+
+int sspStartToNet(ssp_t *ssp)
 	return(0);
 }
