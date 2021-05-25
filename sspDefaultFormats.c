@@ -12,20 +12,6 @@
 #include <stdint.h>
 #include "ssp.h"
 
-/*
-ID
-0 - string
-1 - int
-2 - float
-3 - date
- 
-2bytes4bytes|4Bytes2bytes4bytes...|
-VERSIONfull_sz|TagIdSszabcde|TagIdSzabcde|TagIdSzabcde
-
-
-DumpMsg()
-*/
-
 int stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	*proc = (dataInSz < dataOutSz ? dataInSz : dataOutSz);

@@ -18,25 +18,25 @@
 #define SSP_QTD_FMT(__ssp_qtdfmt__) (sizeof(__ssp_qtdfmt__) / sizeof(sspFmt_t))
 
 typedef struct _sspFmt_t{
-	unsigned int id;
-	int (*toNet)(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz);
-	int (*fromNet)(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz);
+	uint16_t id;
+	int (*toNet)(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc);
+	int (*fromNet)(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc);
 }sspFmt_t;
 
 typedef struct _ssp_t{
-	unsigned int version;
+	uint16_t version;
 	sspFmt_t *format;
 	unsigned int qtdFmt;
 	unsigned char *msg;
+	unsigned char *msgWalker;
 	size_t msgMaxSz;
-	size_t msgSz;
 }ssp_t;
 
-int sspCtx(ssp_t *ssp, unsigned int version, sspFmt_t *format, unsigned qtdFmt, unsigned char *msg, size_t msgMaxSz);
+int sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned qtdFmt, unsigned char *msg, size_t msgMaxSz);
 int sspStartToNet(ssp_t *ssp);
 int sspStartFetch(ssp_t *ssp);
 
-int pack(ssp_t *ssp, unsigned int id, void *dataIn, size_t *dataInSz);
-int unpack(ssp_t *ssp, unsigned int id, void *dataOut, size_t dataOutSz);
+int pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
+int unpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc);
 
 #endif
