@@ -26,7 +26,7 @@ VERSIONfull_sz|IdSszabcde|IdSzabcde|IdSzabcde
 VERSION full_sz   Id Sz abcde    Id Sz abcde   Id Sz abcde
 */
 
-int sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtdFmt, unsigned char *msg, size_t msgMaxSz)
+sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtdFmt, unsigned char *msg, size_t msgMaxSz)
 {
 	ssp->version = version;
 	ssp->format = format;
@@ -39,7 +39,7 @@ int sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtdFmt, 
 	return(SSP_OK);
 }
 
-int sspStartFetch(ssp_t *ssp)
+sspRet_t sspStartFetch(ssp_t *ssp)
 {
 	/* Jumping VERSION and FULLSIZE */
 	ssp->msgWalker = ssp->msg + sizeof(uint16_t) + sizeof(uint32_t);
@@ -47,7 +47,7 @@ int sspStartFetch(ssp_t *ssp)
 	return(SSP_OK);
 }
 
-int sspStartToNet(ssp_t *ssp)
+sspRet_t sspStartToNet(ssp_t *ssp)
 {
 	memset(ssp->msg, 0, ssp->msgMaxSz);
 	sspStartFetch(ssp);
@@ -55,7 +55,7 @@ int sspStartToNet(ssp_t *ssp)
 	return(SSP_OK);
 }
 
-int sspCloseToNet(ssp_t *ssp)
+sspRet_t sspCloseToNet(ssp_t *ssp)
 {
 	/* write the size (ssp->msg[msgSz] - ssp->msg), if < smgMaxLen */
 	return(SSP_OK);
@@ -71,7 +71,7 @@ int sspCloseToNet(ssp_t *ssp)
  * uint16_t ntohs(uint16_t netshort);
  */
 
-int writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t dataInSz)
+sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t dataInSz)
 {
 	uint32_t szNetByteOrder = 0;
 	uint16_t idNetByteOrder = 0;
@@ -99,7 +99,7 @@ int writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t dataInSz)
 	return(SSP_OK);
 }
 
-int pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
+sspRet_t pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 {
 	unsigned int i = 0;
 
@@ -116,7 +116,7 @@ int pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 	return(SSP_ERROR);
 }
 
-int unpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t unpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
