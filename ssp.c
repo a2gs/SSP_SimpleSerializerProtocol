@@ -20,7 +20,7 @@ ID
 2 - float
 3 - date
  
-2bytes4bytes|2bytes2bytes...|
+2bytes4bytes|2bytes4bytes...|
 
 VERSIONfull_sz|IdSszabcde|IdSzabcde|IdSzabcde
 VERSION full_sz   Id Sz abcde    Id Sz abcde   Id Sz abcde
@@ -76,14 +76,25 @@ int writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t dataInSz)
 	uint32_t szNetByteOrder = 0;
 	uint16_t idNetByteOrder = 0;
 	size_t sz = 0;
+	size_t szLeft = 0;
+
+#define SSP_SIZEOF_SZFMTID_SZFIELD (sizeof(uint16_t) + sizeof(uint32_t))
+
+	szLeft = &ssp->msg[ssp->msgMaxSz] - ssp->msgWalker;
+
+	/* Check size at least to fmt id and field size */
+	if(szLeft <= SSP_SIZEOF_SZFMTID_SZFIELD)
+		return(SSP_THEREISNOMORESPACE);
 
 	idNetByteOrder = htons(fmtId);
-
-	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker, &ssp->msg[ssp->msgMaxSz] - ssp->msgWalker, &sz);
-
+	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));
 
 
+	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft, &sz);
 
+	/* write field size to buffer */
+	szNetByteOrder = ntohl((uint32_t)sz);
+	memcpy(ssp->msgWalker + sizeof(uint16_t), &szNetByteOrder, sizeof(uint32_t));
 
 	return(SSP_OK);
 }

@@ -12,8 +12,16 @@
 
 #include <stddef.h>
 
+/*
 #define SSP_OK    (1)
 #define SSP_ERROR (0)
+*/
+enum SSP_ret_t{
+    SSP_OK = 1,
+    SSP_ERROR,
+    SSP_TRUNCATEDBUTTHEREISNOMORESPACE,
+    SSP_THEREISNOMORESPACE
+};
 
 #define SSP_QTD_FMT(__ssp_qtdfmt__) (sizeof(__ssp_qtdfmt__) / sizeof(sspFmt_t))
 
