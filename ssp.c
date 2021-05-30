@@ -83,14 +83,14 @@ sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t data
 	szLeft = &ssp->msg[ssp->msgMaxSz] - ssp->msgWalker;
 
 	/* Check size at least to fmt id and field size */
-	if(szLeft <= SSP_SIZEOF_SZFMTID_SZFIELD)
+	if(szLeft < SSP_SIZEOF_SZFMTID_SZFIELD)
 		return(SSP_THEREISNOMORESPACE);
 
 	idNetByteOrder = htons(fmtId);
 	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));
 
 
-	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft, &sz);
+	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
 
 	/* write field size to buffer */
 	szNetByteOrder = ntohl((uint32_t)sz);
