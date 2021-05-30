@@ -12,7 +12,17 @@
 #include <stdint.h>
 #include "ssp.h"
 
-int stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+/*
+ * TO NET:
+ * dataIn -> typed input (host origin -> net dest)
+ * dataOut -> formatted to 'unsgiedn char *' output (dest)
+ *
+ * FROM NET:
+ * dataIn -> formatted 'unsgiedn char *' input (net oringin -> host dest)
+ * dataOut -> typed output (dest)
+ */
+
+sspRet_t stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	*proc = (dataInSz < dataOutSz ? dataInSz : dataOutSz);
 
@@ -21,42 +31,52 @@ int stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t da
 	return(SSP_OK);
 }
 
-int stringFromNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t stringFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	*proc = (dataInSz < dataOutSz ? dataInSz : dataOutSz);
 
 	memcpy(dataOut, dataIn, *proc);
-	dataOut[*proc] = '\0';
+	*((unsigned char *)dataOut + *proc) = '\0';
 
 	return(SSP_OK);
 }
 
-int charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+{
+	if(dataInSz != 1)
+		return(SSP_DATAINSIZEERROR);
+
+	if(dataOutSz == 0)
+		return(SSP_THEREISNOMORESPACE);
+
+	*proc = 1;
+
+	*dataOut = *((unsigned char *)dataIn);
+
+	return(SSP_OK);
+}
+
+sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
 
-int charByeFromNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
 
-int floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t floatFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
 
-int floatFromNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t integer32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
 
-int integer32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
-{
-	return(0);
-}
-
-int integer32FromNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t integer32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }

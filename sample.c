@@ -18,14 +18,14 @@ typedef struct _myType_t{
 	double c;
 }myType_t;
 
-int myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz, size_t *proc)
+sspRet_t myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz, size_t *proc)
 {
-	return(0);
+	return(SSP_OK);
 }
 
-int myTypeFromNet(void *dataIn, size_t *dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t myTypeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
-	return(0);
+	return(SSP_OK);
 }
 
 #define MYPROTO_MAX_SZ (10000)
