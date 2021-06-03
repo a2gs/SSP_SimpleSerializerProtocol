@@ -7,8 +7,9 @@
  * MIT License
  */
 
-#include <stddef.h>
+#include <stdio.h>
 #include <string.h>
+#include <stddef.h>
 #include <stdint.h>
 #include "ssp.h"
 
@@ -58,6 +59,16 @@ sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, si
 
 sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
+	if(dataOutSz != 1)
+		return(SSP_DATAINSIZEERROR);
+
+	if(dataInSz < 1)
+		return(SSP_THEREISNOMORESPACE);
+
+	*proc = 1;
+
+	*dataOut = *((unsigned char *)dataIn);
+
 	return(0);
 }
 
