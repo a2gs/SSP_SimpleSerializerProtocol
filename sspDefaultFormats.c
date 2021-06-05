@@ -60,6 +60,9 @@ sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, si
 
 sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
+	unsigned char aux = 0;
+	unsigned char *dest = NULL;
+
 	if(dataOutSz != 1)
 		return(SSP_DATAINSIZEERROR);
 
@@ -68,43 +71,60 @@ sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, s
 
 	*proc = 1;
 
-	*dataOut = *((unsigned char *)dataIn);
+	aux = *((unsigned char *)dataIn);
+	dest = (unsigned char *)dataOut;
+
+	*dest = aux;
 
 	return(SSP_OK);
 }
 
 sspRet_t floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
-	snprintf(dataOut, dataOutSz, "%f", (float) *dataIn);
+	float aux = 0.0;
+	float *orig = NULL;
 
-	proc = strnlen(dataOut, dataOutSz);
+	orig = dataIn;
+	aux = *orig;
+
+	snprintf((char *)dataOut, dataOutSz, "%f", aux);
+
+	*proc = strnlen((char *)dataOut, dataOutSz);
 
 	return(SSP_OK);
 }
 
 sspRet_t floatFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
-	dataOut = strtof(dataIn, NULL, 10);
+	float *dest = NULL;
 
-	proc = sizeof(float);
+	dest = dataOut;
+
+	*dest = strtof((char *)dataIn, NULL);
+
+	*proc = sizeof(float);
 
 	return(SSP_OK);
 }
 
 sspRet_t integer32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
-	snprintf(dataOut, dataOutSz, "%d", (int32_t) *dataIn);
+	snprintf((char *)dataOut, dataOutSz, "%d", *((int32_t *) dataIn));
 
-	proc = strnlen(dataOut, dataOutSz);
+	*proc = strnlen((char *)dataOut, dataOutSz);
 
 	return(SSP_OK);
 }
 
 sspRet_t integer32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
-	dataOut = strtod(dataIn, NULL);
+	float *dest = NULL;
 
-	proc = sizeof(int32_t);
+	dest = dataOut;
+
+	*dest = strtod((char *)dataIn, NULL);
+
+	*proc = sizeof(int32_t);
 
 	return(SSP_OK);
 }
