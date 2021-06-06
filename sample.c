@@ -46,11 +46,8 @@ int main(int argc, char *argv[])
 		{MYTYPE_ID_INT32,  integer32ToNet, integer32FromNet}
 	};
 	ssp_t myProto;
+	sspRet_t ret;
 	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
-
-	sspCtx(&myProto, 1, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
-
-	sspStartToNet(&myProto);
 
 	int32_t a = 123;
 	float b = 13.08;
@@ -58,25 +55,36 @@ int main(int argc, char *argv[])
 	char d = 'a';
 	myType_t e = {13, "abcde", 1.41};
 
-	sspPack(&myProto, MYTYPE_ID_STRING, &c, strlen(c));
-	sspPack(&myProto, MYTYPE_ID_CHAR, &d, 1);
-	sspPack(&myProto, MYTYPE_ID_MYTYPE, &e, sizeof(myType_t));
-	sspPack(&myProto, MYTYPE_ID_FLOAT, &b, sizeof(float));
-	sspPack(&myProto, MYTYPE_ID_INT32, &a, sizeof(int32_t));
+#define SAMPLE_SSP_COMMON_RETURNING_CHECK(__sample_ret_) { \
+																				if(ret != SSP_OK){                                                                            \
+																					printf("[%s:%d] SSP error: [%s].\n", __FILE__, __LINE__, sspReturnMessage(__sample_ret_)); \
+																					return(-1);                                                                                \
+																				}                                                                                             \
+																			}
 
+	ret = sspCtx(&myProto, 1, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-	/*
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	sspPack(....);
-	*/
+	ret = sspStartToNet(&myProto);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-	sspCloseToNet(ssp);
+	ret = sspPack(&myProto, MYTYPE_ID_STRING, &c, strlen(c));
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspPack(&myProto, MYTYPE_ID_CHAR, &d, 1);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspPack(&myProto, MYTYPE_ID_MYTYPE, &e, sizeof(myType_t));
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspPack(&myProto, MYTYPE_ID_FLOAT, &b, sizeof(float));
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspPack(&myProto, MYTYPE_ID_INT32, &a, sizeof(int32_t));
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspCloseToNet(ssp);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
 	/*
 	send(ssp->msg);

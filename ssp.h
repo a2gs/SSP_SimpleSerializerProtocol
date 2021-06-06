@@ -42,6 +42,7 @@ typedef struct _ssp_t{
 sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned qtdFmt, unsigned char *msg, size_t msgMaxSz);
 sspRet_t sspStartToNet(ssp_t *ssp);
 sspRet_t sspStartFetch(ssp_t *ssp);
+char * sspReturnMessage(sspRet_t err);
 
 sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
 sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc);

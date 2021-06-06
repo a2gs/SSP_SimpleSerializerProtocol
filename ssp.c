@@ -39,7 +39,7 @@ sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtd
 	return(SSP_OK);
 }
 
-char * sspStartFetch(sspRet_t err)
+char * sspReturnMessage(sspRet_t err)
 {
 	char *ret = NULL;
 
