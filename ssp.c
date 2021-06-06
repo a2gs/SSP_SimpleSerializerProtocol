@@ -39,6 +39,34 @@ sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtd
 	return(SSP_OK);
 }
 
+char * sspStartFetch(sspRet_t err)
+{
+	char *ret = NULL;
+
+	switch(err){
+		case SSP_ERROR:
+			ret = "Error";
+			break;
+
+		case SSP_TRUNCATEDBUTTHEREISNOMORESPACE:
+			ret = "Data truncated. There is no more space.";
+			break;
+
+		case SSP_THEREISNOSPACE:
+			ret = "There is no more space.";
+			break;
+
+		case SSP_DATAINSIZEERROR:
+			ret = "Input data size is not correct.";
+			break;
+
+		default:
+			ret = "Ok";
+	}
+
+	return(ret);
+}
+
 sspRet_t sspStartFetch(ssp_t *ssp)
 {
 	/* Jumping VERSION and FULLSIZE */
@@ -84,7 +112,7 @@ sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t data
 
 	/* Check size at least to fmt id and field size */
 	if(szLeft < SSP_SIZEOF_SZFMTID_SZFIELD)
-		return(SSP_THEREISNOMORESPACE);
+		return(SSP_THEREISNOSPACE);
 
 	idNetByteOrder = htons(fmtId);
 	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));

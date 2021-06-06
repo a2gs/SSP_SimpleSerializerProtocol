@@ -49,7 +49,7 @@ sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, si
 		return(SSP_DATAINSIZEERROR);
 
 	if(dataOutSz == 0)
-		return(SSP_THEREISNOMORESPACE);
+		return(SSP_THEREISNOSPACE);
 
 	*proc = 1;
 
@@ -67,7 +67,7 @@ sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, s
 		return(SSP_DATAINSIZEERROR);
 
 	if(dataInSz < 1)
-		return(SSP_THEREISNOMORESPACE);
+		return(SSP_THEREISNOSPACE);
 
 	*proc = 1;
 

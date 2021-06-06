@@ -13,19 +13,19 @@
 #include <stddef.h>
 
 typedef enum _sspRet_t{
-    SSP_OK = 1,
-    SSP_ERROR,
-    SSP_TRUNCATEDBUTTHEREISNOMORESPACE,
-    SSP_THEREISNOMORESPACE,
-    SSP_DATAINSIZEERROR
+	SSP_OK = 1,
+	SSP_ERROR,
+	SSP_TRUNCATEDBUTTHEREISNOMORESPACE,
+	SSP_THEREISNOSPACE,
+	SSP_DATAINSIZEERROR
 }sspRet_t;
 
 #define SSP_QTD_FMT(__ssp_qtdfmt__) (sizeof(__ssp_qtdfmt__) / sizeof(sspFmt_t))
 
 typedef struct _sspFmt_t{
 	uint16_t id;
-    sspRet_t (*toNet)(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc);
-    sspRet_t (*fromNet)(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc);
+	sspRet_t (*toNet)(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc);
+	sspRet_t (*fromNet)(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc);
 }sspFmt_t;
 
 typedef struct _ssp_t{
