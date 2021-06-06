@@ -99,7 +99,7 @@ sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t data
 	return(SSP_OK);
 }
 
-sspRet_t pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
+sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 {
 	unsigned int i = 0;
 
@@ -116,7 +116,7 @@ sspRet_t pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 	return(SSP_ERROR);
 }
 
-sspRet_t unpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }

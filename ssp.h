@@ -43,7 +43,7 @@ sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned qtdFmt,
 sspRet_t sspStartToNet(ssp_t *ssp);
 sspRet_t sspStartFetch(ssp_t *ssp);
 
-sspRet_t pack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
-sspRet_t unpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc);
+sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
+sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc);
 
 #endif
