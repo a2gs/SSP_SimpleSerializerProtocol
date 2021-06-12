@@ -10,9 +10,10 @@
 #include <stdio.h>
 #include <stddef.h>
 #include <unistd.h>
+#include <string.h>
 #include <errno.h>
 #include "ssp.h"
-#include "sspDeafultFormats.h"
+#include "sspDefaultFormats.h"
 
 typedef struct _myType_t{
 	int a;
@@ -20,7 +21,7 @@ typedef struct _myType_t{
 	double c;
 }myType_t;
 
-sspRet_t myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t *dataOutSz, size_t *proc)
+sspRet_t myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(SSP_OK);
 }
@@ -88,14 +89,14 @@ int main(int argc, char *argv[])
 	ret = sspPack(&myProto, MYTYPE_ID_INT32, &a, sizeof(int32_t));
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-	ret = sspCloseToNet(ssp);
+	ret = sspCloseToNet(&myProto);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-	ret = sspMessage(ssp, &msg, &msgSz)
+	ret = sspMessage(&myProto, &msg, &msgSz);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-	if(write(STDERR_FILENO, msg, msgSz) != msgSz){
-		printf("[%s:%d] write error: [%s].\n", __FILE__, __LINE__, streror(errno));
+	if(write(STDERR_FILENO, msg, msgSz) != (ssize_t) msgSz){
+		printf("[%s:%d] write error: [%s].\n", __FILE__, __LINE__, strerror(errno));
 		return(-1);
 	}
 

@@ -79,7 +79,7 @@ sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, s
 	return(SSP_OK);
 }
 
-sspRet_t floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t float32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	float aux = 0.0;
 	float *orig = NULL;
@@ -94,7 +94,7 @@ sspRet_t floatToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_
 	return(SSP_OK);
 }
 
-sspRet_t floatFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t float32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	float *dest = NULL;
 
