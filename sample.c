@@ -9,6 +9,8 @@
 
 #include <stdio.h>
 #include <stddef.h>
+#include <unistd.h>
+#include <errno.h>
 #include "ssp.h"
 #include "sspDeafultFormats.h"
 
@@ -49,6 +51,9 @@ int main(int argc, char *argv[])
 	sspRet_t ret;
 	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
 
+	unsigned char *msg = NULL;
+	size_t msgSz = 0;
+
 	int32_t a = 123;
 	float b = 13.08;
 	char c[] = "sample string";
@@ -85,6 +90,14 @@ int main(int argc, char *argv[])
 
 	ret = sspCloseToNet(ssp);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	ret = sspMessage(ssp, &msg, &msgSz)
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	if(write(STDERR_FILENO, msg, msgSz) != msgSz){
+		printf("[%s:%d] write error: [%s].\n", __FILE__, __LINE__, streror(errno));
+		return(-1);
+	}
 
 	/*
 	send(ssp->msg);

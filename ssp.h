@@ -47,4 +47,6 @@ char * sspReturnMessage(sspRet_t err);
 sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
 sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc);
 
+sspRet_t sspMessage(ssp_t *ssp, unsigned char **msg, size_t *msgSz);
+
 #endif

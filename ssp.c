@@ -148,3 +148,14 @@ sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, siz
 {
 	return(0);
 }
+
+sspRet_t sspMessage(ssp_t *ssp, unsigned char **msg, size_t *msgSz)
+{
+	if((ssp->msg == NULL) || (ssp->msgWalker == NULL))
+		return(SSP_ERROR);
+
+	*msg = ssp->msg;
+	*msgSz = ssp->msgWalker - ssp->msg;
+
+	return(SSP_OK);
+}
