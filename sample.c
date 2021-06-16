@@ -23,6 +23,21 @@ typedef struct _myType_t{
 
 sspRet_t myTypeToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
+#define SSP_SAMPLE_MYTYPE_TONET_BUFFER_SZ (100)
+	char buf[SSP_SAMPLE_MYTYPE_TONET_BUFFER_SZ] = {0};
+	myType_t *myData = (myType_t *)dataIn;
+	size_t fmtbuf = 0;
+
+	snprintf(buf, SSP_SAMPLE_MYTYPE_TONET_BUFFER_SZ,
+	         "<a fmt=int>%d</a><b fmt=str>%s</b><c fmt=double>%f</c>",
+	         myData->a, myData->b, myData->c);
+
+	fmtbuf = strnlen(buf, SSP_SAMPLE_MYTYPE_TONET_BUFFER_SZ);
+
+	*proc = (fmtbuf < dataOutSz ? fmtbuf : dataOutSz);
+
+	memcpy(dataOut, myData, *proc);
+
 	return(SSP_OK);
 }
 
