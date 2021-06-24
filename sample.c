@@ -83,6 +83,8 @@ int main(int argc, char *argv[])
 																				}                                                                                             \
 																			}
 
+	DEBUG("a=[%d] b=[%f] c=[%s] d=[%c] e=myType\n", a, b, c, d);
+
 	ret = sspCtx(&myProto, 1, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 

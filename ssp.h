@@ -12,6 +12,16 @@
 
 #include <stddef.h>
 
+#ifdef DEBUG_ON
+	#include <stdio.h>
+	#define DEBUG(...) {                      \
+	                     printf("DEBUG: ");   \
+	                     printf(__VA_ARGS__); \
+	                   }
+#else
+	#define DEBUG(x) NULL
+#endif
+
 typedef enum _sspRet_t{
 	SSP_OK = 1,
 	SSP_ERROR,

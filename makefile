@@ -1,6 +1,6 @@
 # Andre Augusto Giannotti Scota (https://sites.google.com/view/a2gs/)
 # C flags:
-CFLAGS_OPTIMIZATION = -g
+CFLAGS_OPTIMIZATION = -g -DDEBUG_ON
 #CFLAGS_OPTIMIZATION = -O3
 CVERSION = c11
 CFLAGS_VERSION = -std=$(CVERSION)
