@@ -117,7 +117,6 @@ sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t data
 	idNetByteOrder = htons(fmtId);
 	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));
 
-
 	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
 
 	/* write field size to buffer */
@@ -133,6 +132,9 @@ sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 
 	for(i = 0; i <= ssp->qtdFmt; i++){
 		if(ssp->format[i].id == id){
+
+			DEBUG("format matches: %d\n", i);
+
 			if(writeFmtIdAndData(ssp, i, dataIn, dataInSz) == SSP_ERROR){
 				return(SSP_ERROR);
 			}

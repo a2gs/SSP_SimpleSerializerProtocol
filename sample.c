@@ -88,29 +88,47 @@ int main(int argc, char *argv[])
 	ret = sspCtx(&myProto, 1, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	DEBUG("sspStartToNet\n");
+
 	ret = sspStartToNet(&myProto);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	DEBUG("sspPack(c)\n");
 
 	ret = sspPack(&myProto, MYTYPE_ID_STRING, &c, strlen(c));
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	DEBUG("sspPack(d)\n");
+
 	ret = sspPack(&myProto, MYTYPE_ID_CHAR, &d, 1);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	DEBUG("sspPack(e)\n");
 
 	ret = sspPack(&myProto, MYTYPE_ID_MYTYPE, &e, sizeof(myType_t));
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	DEBUG("sspPack(b)\n");
+
 	ret = sspPack(&myProto, MYTYPE_ID_FLOAT, &b, sizeof(float));
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	DEBUG("sspPack(a)\n");
 
 	ret = sspPack(&myProto, MYTYPE_ID_INT32, &a, sizeof(int32_t));
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	DEBUG("sspCloseToNet\n");
+
 	ret = sspCloseToNet(&myProto);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	DEBUG("sspMessage\n");
+
 	ret = sspMessage(&myProto, &msg, &msgSz);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	DEBUG("write\n");
 
 	if(write(STDERR_FILENO, msg, msgSz) != (ssize_t) msgSz){
 		printf("[%s:%d] write error: [%s].\n", __FILE__, __LINE__, strerror(errno));
