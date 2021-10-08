@@ -24,7 +24,7 @@
  * dataOut -> typed output (dest)
  */
 
-sspRet_t stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspStringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	*proc = (dataInSz < dataOutSz ? dataInSz : dataOutSz);
 
@@ -33,7 +33,7 @@ sspRet_t stringToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size
 	return(SSP_OK);
 }
 
-sspRet_t stringFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspStringFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	*proc = (dataInSz < dataOutSz ? dataInSz : dataOutSz);
 
@@ -43,7 +43,7 @@ sspRet_t stringFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, si
 	return(SSP_OK);
 }
 
-sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspCharByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	if(dataInSz != 1)
 		return(SSP_DATAINSIZEERROR);
@@ -58,7 +58,7 @@ sspRet_t charByteToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, si
 	return(SSP_OK);
 }
 
-sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspCharByteFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	unsigned char aux = 0;
 	unsigned char *dest = NULL;
@@ -79,7 +79,7 @@ sspRet_t charByeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, s
 	return(SSP_OK);
 }
 
-sspRet_t float32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspFloat32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	float aux = 0.0;
 	float *orig = NULL;
@@ -94,7 +94,7 @@ sspRet_t float32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, siz
 	return(SSP_OK);
 }
 
-sspRet_t float32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspFloat32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	float *dest = NULL;
 
@@ -107,7 +107,7 @@ sspRet_t float32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, s
 	return(SSP_OK);
 }
 
-sspRet_t integer32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspInteger32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc)
 {
 	snprintf((char *)dataOut, dataOutSz, "%d", *((int32_t *) dataIn));
 
@@ -116,7 +116,7 @@ sspRet_t integer32ToNet(void *dataIn, size_t dataInSz, unsigned char *dataOut, s
 	return(SSP_OK);
 }
 
-sspRet_t integer32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspInteger32FromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	float *dest = NULL;
 

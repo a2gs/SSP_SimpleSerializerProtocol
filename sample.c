@@ -57,11 +57,11 @@ sspRet_t myTypeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, si
 int main(int argc, char *argv[])
 {
 	sspFmt_t myFmt[] = {
-		{MYTYPE_ID_STRING, stringToNet,    stringFromNet},
-		{MYTYPE_ID_CHAR,   charByteToNet,  charByeFromNet},
-		{MYTYPE_ID_MYTYPE, myTypeToNet,    myTypeFromNet},
-		{MYTYPE_ID_FLOAT,  float32ToNet,   float32FromNet},
-		{MYTYPE_ID_INT32,  integer32ToNet, integer32FromNet}
+		{MYTYPE_ID_STRING, sspStringToNet,    sspStringFromNet},
+		{MYTYPE_ID_CHAR,   sspCharByteToNet,  sspCharByteFromNet},
+		{MYTYPE_ID_MYTYPE, myTypeToNet,        myTypeFromNet},
+		{MYTYPE_ID_FLOAT,  sspFloat32ToNet,   sspFloat32FromNet},
+		{MYTYPE_ID_INT32,  sspInteger32ToNet, sspInteger32FromNet}
 	};
 	ssp_t myProto;
 	sspRet_t ret;

@@ -20,10 +20,10 @@ ID
 2 - float
 3 - date
  
-2bytes4bytes|2bytes4bytes...|
-
+2bytes4bytes|2bytes4bytes...|2bytes4bytes...|2bytes4bytes...|
 VERSIONfull_sz|IdSszabcde|IdSzabcde|IdSzabcde
 VERSION full_sz   Id Sz abcde    Id Sz abcde   Id Sz abcde
+
 */
 
 sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtdFmt, unsigned char *msg, size_t msgMaxSz)
@@ -70,7 +70,8 @@ char * sspReturnMessage(sspRet_t err)
 sspRet_t sspStartFetch(ssp_t *ssp)
 {
 	/* Jumping VERSION and FULLSIZE */
-	ssp->msgWalker = ssp->msg + sizeof(uint16_t) + sizeof(uint32_t);
+#define SSP_SIZEOF_VERSION_FULLSIZE (sizeof(uint16_t) + sizeof(uint32_t))
+	ssp->msgWalker = ssp->msg + SSP_SIZEOF_VERSION_FULLSIZE;
 
 	return(SSP_OK);
 }
@@ -99,43 +100,55 @@ sspRet_t sspCloseToNet(ssp_t *ssp)
  * uint16_t ntohs(uint16_t netshort);
  */
 
-sspRet_t writeFmtIdAndData(ssp_t *ssp, uint16_t fmtId, void *dataIn, size_t dataInSz)
+sspRet_t writeFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId, void *dataIn, size_t dataInSz)
 {
 	uint32_t szNetByteOrder = 0;
 	uint16_t idNetByteOrder = 0;
-	size_t sz = 0;
-	size_t szLeft = 0;
+	size_t sz = 0, szLeft = 0;
+	sspRet_t retFmt = SSP_ERROR;
 
-#define SSP_SIZEOF_SZFMTID_SZFIELD (sizeof(uint16_t) + sizeof(uint32_t))
+#define SSP_SIZEOF_SZFMTID_SZFIELD (sizeof(uint16_t) + sizeof(uint32_t)) /* id + size */
 
-	szLeft = &ssp->msg[ssp->msgMaxSz] - ssp->msgWalker;
+	szLeft = ssp->msgMaxSz - (ssp->msgWalker - ssp->msg);
 
-	/* Check size at least to fmt id and field size */
-	if(szLeft < SSP_SIZEOF_SZFMTID_SZFIELD)
+	DEBUG("Size total: [%ld] Size left: [%ld]\n", ssp->msgMaxSz, szLeft);
+
+	/* Check size at least to fmt id and field size */  // TODO: aqui podemos ver se ha espaco para data
+	/* This code MUST (__MUST__) be alive, but today there is no way. We need format this field in another buffer
+	 * and after check (and then copy) to ssp->msgWalker
+	if(szLeft < SSP_SIZEOF_SZFMTID_SZFIELD + (sizeof(dataaaaaaaaaaaaaa) ?????? ) )
 		return(SSP_THEREISNOSPACE);
+	*/
 
+	/* write field id to buffer */
 	idNetByteOrder = htons(fmtId);
 	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));
-
-	ssp->format[fmtId].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
 
 	/* write field size to buffer */
 	szNetByteOrder = ntohl((uint32_t)sz);
 	memcpy(ssp->msgWalker + sizeof(uint16_t), &szNetByteOrder, sizeof(uint32_t));
 
-	return(SSP_OK);
+	/* write field data to buffer */
+	retFmt = ssp->format[fmtIndex].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
+
+	if(retFmt == SSP_OK){
+		ssp->msgWalker += SSP_SIZEOF_SZFMTID_SZFIELD + sz;
+		return(SSP_OK);
+	}
+
+	return(SSP_ERROR);
 }
 
 sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 {
 	unsigned int i = 0;
 
-	for(i = 0; i <= ssp->qtdFmt; i++){
+	for(i = 0; i < ssp->qtdFmt; i++){
 		if(ssp->format[i].id == id){
 
-			DEBUG("format matches: %d\n", i);
+			DEBUG("format matches: %d\n", id);
 
-			if(writeFmtIdAndData(ssp, i, dataIn, dataInSz) == SSP_ERROR){
+			if(writeFmtIdSizeAndData(ssp, i, id, dataIn, dataInSz) == SSP_ERROR){
 				return(SSP_ERROR);
 			}
 
