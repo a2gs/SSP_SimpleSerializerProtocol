@@ -69,7 +69,6 @@ char * sspReturnMessage(sspRet_t err)
 
 sspRet_t sspStartFetch(ssp_t *ssp)
 {
-	/* Jumping VERSION and FULLSIZE */
 #define SSP_SIZEOF_VERSION_FULLSIZE (sizeof(uint16_t) + sizeof(uint32_t))
 	ssp->msgWalker = ssp->msg + SSP_SIZEOF_VERSION_FULLSIZE;
 
@@ -78,15 +77,24 @@ sspRet_t sspStartFetch(ssp_t *ssp)
 
 sspRet_t sspStartToNet(ssp_t *ssp)
 {
+	uint16_t versionNetByteOrder = 0;
+
 	memset(ssp->msg, 0, ssp->msgMaxSz);
 	sspStartFetch(ssp);
+
+	versionNetByteOrder = htons(ssp->version);
+	memcpy(ssp->msg, &versionNetByteOrder, sizeof(uint16_t));
 
 	return(SSP_OK);
 }
 
 sspRet_t sspCloseToNet(ssp_t *ssp)
 {
-	/* write the size (ssp->msg[msgSz] - ssp->msg), if < smgMaxLen */
+	uint32_t szNetByteOrder = 0;
+
+	szNetByteOrder = ntohl((uint32_t)(ssp->msgWalker - ssp->msg));
+	memcpy(ssp->msg + sizeof(uint16_t), &szNetByteOrder, sizeof(uint32_t));
+
 	return(SSP_OK);
 }
 
@@ -131,12 +139,11 @@ sspRet_t writeFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId
 	/* write field data to buffer */
 	retFmt = ssp->format[fmtIndex].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
 
-	if(retFmt == SSP_OK){
-		ssp->msgWalker += SSP_SIZEOF_SZFMTID_SZFIELD + sz;
-		return(SSP_OK);
-	}
+	if(retFmt != SSP_OK)
+		return(SSP_ERROR);
 
-	return(SSP_ERROR);
+	ssp->msgWalker += SSP_SIZEOF_SZFMTID_SZFIELD + sz;
+	return(SSP_OK);
 }
 
 sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
@@ -150,12 +157,14 @@ sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 
 			if(writeFmtIdSizeAndData(ssp, i, id, dataIn, dataInSz) == SSP_ERROR){
 				return(SSP_ERROR);
+				DEBUG("format error\n");
 			}
 
 			return(SSP_OK);
 		}
 	}
 
+	DEBUG("format not found\n");
 	return(SSP_ERROR);
 }
 
