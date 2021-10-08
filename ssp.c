@@ -178,7 +178,7 @@ sspRet_t sspMessage(ssp_t *ssp, unsigned char **msg, size_t *msgSz)
 	if((ssp->msg == NULL) || (ssp->msgWalker == NULL))
 		return(SSP_ERROR);
 
-	*msg = ssp->msg;
+	*msg   = ssp->msg;
 	*msgSz = ssp->msgWalker - ssp->msg;
 
 	return(SSP_OK);

@@ -46,7 +46,9 @@ sspRet_t myTypeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, si
 	return(SSP_OK);
 }
 
-#define MYPROTO_MAX_SZ (10000)
+#define MYPROTO_MAX_SZ	(10000)
+#define SAMPLE_SSP_OK	(0)
+#define SAMPLE_SSP_ERROR	(1)
 
 #define MYTYPE_ID_STRING (1)
 #define MYTYPE_ID_CHAR   (2)
@@ -54,15 +56,17 @@ sspRet_t myTypeFromNet(unsigned char *dataIn, size_t dataInSz, void *dataOut, si
 #define MYTYPE_ID_FLOAT  (4)
 #define MYTYPE_ID_INT32  (5)
 
-int main(int argc, char *argv[])
+/* Used to write and read information: */
+sspFmt_t myFmt[] = {
+	{MYTYPE_ID_STRING, sspStringToNet,    sspStringFromNet},
+	{MYTYPE_ID_CHAR,   sspCharByteToNet,  sspCharByteFromNet},
+	{MYTYPE_ID_MYTYPE, myTypeToNet,        myTypeFromNet},
+	{MYTYPE_ID_FLOAT,  sspFloat32ToNet,   sspFloat32FromNet},
+	{MYTYPE_ID_INT32,  sspInteger32ToNet, sspInteger32FromNet}
+};
+
+int sampleSSPWrite()
 {
-	sspFmt_t myFmt[] = {
-		{MYTYPE_ID_STRING, sspStringToNet,    sspStringFromNet},
-		{MYTYPE_ID_CHAR,   sspCharByteToNet,  sspCharByteFromNet},
-		{MYTYPE_ID_MYTYPE, myTypeToNet,        myTypeFromNet},
-		{MYTYPE_ID_FLOAT,  sspFloat32ToNet,   sspFloat32FromNet},
-		{MYTYPE_ID_INT32,  sspInteger32ToNet, sspInteger32FromNet}
-	};
 	ssp_t myProto;
 	sspRet_t ret;
 	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
@@ -79,7 +83,7 @@ int main(int argc, char *argv[])
 #define SAMPLE_SSP_COMMON_RETURNING_CHECK(__sample_ret_) { \
 																				if(ret != SSP_OK){                                                                            \
 																					printf("[%s:%d] SSP error: [%s].\n", __FILE__, __LINE__, sspReturnMessage(__sample_ret_)); \
-																					return(-1);                                                                                \
+																					return(SAMPLE_SSP_ERROR);                                                                  \
 																				}                                                                                             \
 																			}
 
@@ -132,12 +136,28 @@ int main(int argc, char *argv[])
 
 	if(write(STDERR_FILENO, msg, msgSz) != (ssize_t) msgSz){
 		printf("[%s:%d] write error: [%s].\n", __FILE__, __LINE__, strerror(errno));
-		return(-1);
+		return(SAMPLE_SSP_ERROR);
 	}
 
-	/*
-	send(ssp->msg);
+	return(SAMPLE_SSP_OK);
+}
 
+int sampleSSPRead()
+{
+	ssp_t myProto;
+	sspRet_t ret;
+	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
+	ssize_t readRet = 0;
+
+	readRet = read(STDIN_FILENO, buffer, MYPROTO_MAX_SZ);
+	if(readRet == -1){
+		printf("[%s:%d] read error: [%s].\n", __FILE__, __LINE__, strerror(errno));
+		return(SAMPLE_SSP_ERROR);
+	}
+
+	printf("Size read: [%zd]\n", readRet);
+
+	/*
 	reset ssp to receive (empty ssp->msg)
 
 	sspStartFetch(ssp_t *ssp)
@@ -148,6 +168,24 @@ int main(int argc, char *argv[])
 	sspUnpack(....);
 	sspUnpack(....);
 	*/
+	return(SAMPLE_SSP_OK);
+}
 
-	return(SSP_OK);
+int main(int argc, char *argv[])
+{
+	if(argc != 2){
+		printf("Sample usage:\n\t%s [write|read]\n\n\twrite - Write to ouput sample buffer\n\tread - Read from STDIN a message\n", argv[0]);
+		return(1);
+	}
+
+	if(strncmp("write", argv[1], strlen(argv[1])) == 0){
+		sampleSSPWrite();
+	}else if(strncmp("read", argv[1], strlen(argv[1])) == 0){
+		sampleSSPRead();
+	}else{
+		printf("Erro parameter [%s]. Allowed: 'write' or 'read'\n", argv[1]);
+		return(1);
+	}
+
+	return(0);
 }
