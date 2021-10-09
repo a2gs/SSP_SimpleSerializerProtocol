@@ -75,12 +75,9 @@ sspRet_t sspStartFetch(ssp_t *ssp)
 	return(SSP_OK);
 }
 
-sspRet_t sspStartToNet(ssp_t *ssp)
+int sspWriteVersion(ssp_t *ssp)
 {
 	uint16_t versionNetByteOrder = 0;
-
-	memset(ssp->msg, 0, ssp->msgMaxSz);
-	sspStartFetch(ssp);
 
 	versionNetByteOrder = htons(ssp->version);
 	memcpy(ssp->msg, &versionNetByteOrder, sizeof(uint16_t));
@@ -88,12 +85,29 @@ sspRet_t sspStartToNet(ssp_t *ssp)
 	return(SSP_OK);
 }
 
-sspRet_t sspCloseToNet(ssp_t *ssp)
+sspRet_t sspStartToNet(ssp_t *ssp)
+{
+	memset(ssp->msg, 0, ssp->msgMaxSz);
+	sspStartFetch(ssp);
+
+	sspWriteVersion(ssp);
+
+	return(SSP_OK);
+}
+
+int sspWriteFullsize(ssp_t *ssp)
 {
 	uint32_t szNetByteOrder = 0;
 
 	szNetByteOrder = ntohl((uint32_t)(ssp->msgWalker - ssp->msg));
 	memcpy(ssp->msg + sizeof(uint16_t), &szNetByteOrder, sizeof(uint32_t));
+
+	return(SSP_OK);
+}
+
+sspRet_t sspCloseToNet(ssp_t *ssp)
+{
+	sspWriteFullsize(ssp);
 
 	return(SSP_OK);
 }
@@ -108,7 +122,7 @@ sspRet_t sspCloseToNet(ssp_t *ssp)
  * uint16_t ntohs(uint16_t netshort);
  */
 
-sspRet_t writeFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId, void *dataIn, size_t dataInSz)
+sspRet_t sspWriteFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId, void *dataIn, size_t dataInSz)
 {
 	uint32_t szNetByteOrder = 0;
 	uint16_t idNetByteOrder = 0;
@@ -121,6 +135,7 @@ sspRet_t writeFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId
 
 	DEBUG("Size total: [%ld] Size left: [%ld]\n", ssp->msgMaxSz, szLeft);
 
+	/* TODO */
 	/* Check size at least to fmt id and field size */  // TODO: aqui podemos ver se ha espaco para data
 	/* This code MUST (__MUST__) be alive, but today there is no way. We need format this field in another buffer
 	 * and after check (and then copy) to ssp->msgWalker
@@ -155,7 +170,7 @@ sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 
 			DEBUG("format matches: %d\n", id);
 
-			if(writeFmtIdSizeAndData(ssp, i, id, dataIn, dataInSz) == SSP_ERROR){
+			if(sspWriteFmtIdSizeAndData(ssp, i, id, dataIn, dataInSz) == SSP_ERROR){
 				return(SSP_ERROR);
 				DEBUG("format error\n");
 			}
