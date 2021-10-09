@@ -65,7 +65,14 @@ sspFmt_t myFmt[] = {
 	{MYTYPE_ID_INT32,  sspInteger32ToNet, sspInteger32FromNet}
 };
 
-int sampleSSPWrite()
+#define SAMPLE_SSP_COMMON_RETURNING_CHECK(__sample_ret_) { \
+																				if(ret != SSP_OK){                                                                            \
+																					printf("[%s:%d] SSP error: [%s].\n", __FILE__, __LINE__, sspReturnMessage(__sample_ret_)); \
+																					return(SAMPLE_SSP_ERROR);                                                                  \
+																				}                                                                                             \
+																			}
+
+int sampleSSPWrite(void)
 {
 	ssp_t myProto;
 	sspRet_t ret;
@@ -80,19 +87,14 @@ int sampleSSPWrite()
 	char d = 'a';
 	myType_t e = {13, "abcde", 1.41};
 
-#define SAMPLE_SSP_COMMON_RETURNING_CHECK(__sample_ret_) { \
-																				if(ret != SSP_OK){                                                                            \
-																					printf("[%s:%d] SSP error: [%s].\n", __FILE__, __LINE__, sspReturnMessage(__sample_ret_)); \
-																					return(SAMPLE_SSP_ERROR);                                                                  \
-																				}                                                                                             \
-																			}
-
 	DEBUG("a=[%d] b=[%f] c=[%s] d=[%c] e=myType\n", a, b, c, d);
 
 	ret = sspCtx(&myProto, 1, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
 	DEBUG("sspStartToNet\n");
+
+	/* sspSetVersion(&myProto, 2); */
 
 	ret = sspStartToNet(&myProto);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
@@ -142,7 +144,7 @@ int sampleSSPWrite()
 	return(SAMPLE_SSP_OK);
 }
 
-int sampleSSPRead()
+int sampleSSPRead(void)
 {
 	ssp_t myProto;
 	sspRet_t ret;
@@ -156,6 +158,27 @@ int sampleSSPRead()
 	}
 
 	printf("Size read: [%zd]\n", readRet);
+
+	/* version = 0. Set version here is futile, we will read it from net */
+	ret = sspCtx(&myProto, 0, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+	DEBUG("sspStartToNet\n");
+
+	ret = sspStartFromNet(&myProto);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+
+
+
+
+
+
+
+
+
+
+
 
 	/*
 	reset ssp to receive (empty ssp->msg)

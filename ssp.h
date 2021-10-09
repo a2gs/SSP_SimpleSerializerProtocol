@@ -38,6 +38,11 @@ typedef struct _sspFmt_t{
 	sspRet_t (*fromNet)(unsigned char *dataIn, size_t dataInSz, void *dataOut, size_t dataOutSz, size_t *proc);
 }sspFmt_t;
 
+typedef struct _sspFetchCtx_t{
+	uint32_t szFromNet;
+	unsigned char *fetchWalker;
+}sspFetchCtx_t;
+
 typedef struct _ssp_t{
 	uint16_t version;
 
@@ -47,11 +52,19 @@ typedef struct _ssp_t{
 	unsigned char *msg;
 	unsigned char *msgWalker;
 	size_t msgMaxSz;
+
+	sspFetchCtx_t fetch;
 }ssp_t;
 
 sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned qtdFmt, unsigned char *msg, size_t msgMaxSz);
+
 sspRet_t sspStartToNet(ssp_t *ssp);
+
+sspRet_t sspStartFromNet(ssp_t *ssp);
 sspRet_t sspStartFetch(ssp_t *ssp);
+
+sspRet_t sspSetVersion(ssp_t *ssp, uint16_t version);
+
 char * sspReturnMessage(sspRet_t err);
 
 sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz);
