@@ -32,6 +32,11 @@ typedef enum _sspRet_t{
 
 #define SSP_QTD_FMT(__ssp_qtdfmt__) (sizeof(__ssp_qtdfmt__) / sizeof(sspFmt_t))
 
+#define SSP_VERSION_TYPE	uint16_t
+#define SSP_FULLSIZE_TYPE	uint32_t
+#define SSP_FIELDSIZE_TYPE	uint32_t
+#define SSP_ID_TYPE			uint16_t
+
 typedef struct _sspFmt_t{
 	uint16_t id;
 	sspRet_t (*toNet)(void *dataIn, size_t dataInSz, unsigned char *dataOut, size_t dataOutSz, size_t *proc);
@@ -44,7 +49,7 @@ typedef struct _sspFetchCtx_t{
 }sspFetchCtx_t;
 
 typedef struct _ssp_t{
-	uint16_t version;
+	SSP_VERSION_TYPE version;
 
 	sspFmt_t *format;
 	unsigned int qtdFmt;
