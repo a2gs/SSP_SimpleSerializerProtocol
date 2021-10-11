@@ -64,6 +64,7 @@ sspRet_t sspStartFromNet(ssp_t *ssp);
 sspRet_t sspStartFetch(ssp_t *ssp);
 
 sspRet_t sspSetVersion(ssp_t *ssp, uint16_t version);
+uint16_t sspGetVersion(ssp_t *ssp);
 
 char * sspReturnMessage(sspRet_t err);
 

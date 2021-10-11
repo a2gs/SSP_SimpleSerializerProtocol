@@ -149,6 +149,7 @@ int sampleSSPRead(void)
 	ssp_t myProto;
 	sspRet_t ret;
 	unsigned char buffer[MYPROTO_MAX_SZ] = {0};
+	unsigned int i = 0;
 	ssize_t readRet = 0;
 
 	readRet = read(STDIN_FILENO, buffer, MYPROTO_MAX_SZ);
@@ -168,9 +169,12 @@ int sampleSSPRead(void)
 	ret = sspStartFromNet(&myProto);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+	ret = sspStartFetch(&myProto);
+	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-
-
+	for(i = 0; ; i++){
+		//ret = sspFetch(&myProto);
+	}
 
 
 

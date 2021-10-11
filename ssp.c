@@ -28,7 +28,7 @@ VERSION full_sz   Id Sz abcde    Id Sz abcde   Id Sz abcde
 
 #define SSP_SIZEOF_VERSION_FULLSIZE (sizeof(uint16_t) + sizeof(uint32_t))
 
-sspRet_t sspStartToNetWalker(ssp_t *ssp)
+sspRet_t sspSetToInitMsgWalker(ssp_t *ssp)
 {
 	ssp->msgWalker = ssp->msg + SSP_SIZEOF_VERSION_FULLSIZE;
 
@@ -40,6 +40,7 @@ uint32_t sspGetFullsizeFromNet(ssp_t *ssp)
 	uint32_t szFromNet = 0;
 
 	memcpy(&szFromNet, ssp->msg + sizeof(uint16_t), sizeof(uint32_t));
+
 	return(ntohl(szFromNet));
 }
 
@@ -51,7 +52,7 @@ sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned int qtd
 	ssp->msg = msg;
 	ssp->msgMaxSz = msgMaxSz;
 
-	sspStartToNetWalker(ssp); /* ssp->msgWalker */
+	sspSetToInitMsgWalker(ssp);
 
 	return(SSP_OK);
 }
@@ -84,9 +85,15 @@ char * sspReturnMessage(sspRet_t err)
 	return(ret);
 }
 
+uint16_t sspGetVersion(ssp_t *ssp)
+{
+	return(ssp->version);
+}
+
 sspRet_t sspSetVersion(ssp_t *ssp, uint16_t version)
 {
 	ssp->version = version;
+
 	return(SSP_OK);
 }
 
@@ -94,6 +101,16 @@ sspRet_t sspStartFetch(ssp_t *ssp)
 {
 	ssp->fetch.szFromNet = sspGetFullsizeFromNet(ssp);
 	ssp->fetch.fetchWalker = ssp->msg + SSP_SIZEOF_VERSION_FULLSIZE;
+
+	return(SSP_OK);
+}
+
+int sspLoadVersion(ssp_t *ssp)
+{
+	uint16_t versionNetByteOrder = 0;
+
+	memcpy(&versionNetByteOrder, ssp->msg, sizeof(uint16_t));
+	ssp->version = ntohs(versionNetByteOrder);
 
 	return(SSP_OK);
 }
@@ -111,25 +128,15 @@ int sspWriteVersion(ssp_t *ssp)
 sspRet_t sspStartToNet(ssp_t *ssp)
 {
 	memset(ssp->msg, 0, ssp->msgMaxSz);
-
-	sspStartToNetWalker(ssp);
-	sspWriteVersion(ssp);
+	sspSetToInitMsgWalker(ssp);
 
 	return(SSP_OK);
 }
 
 sspRet_t sspStartFromNet(ssp_t *ssp)
 {
-	uint16_t versionNetByteOrder = 0;
-
-	/* getting version */
-	memcpy(&versionNetByteOrder, ssp->msg, sizeof(uint16_t));
-	ssp->version = ntohs(versionNetByteOrder);
-
-
-
-
-
+	sspLoadVersion(ssp);
+	sspSetToInitMsgWalker(ssp);
 
 	return(SSP_OK);
 }
@@ -146,6 +153,7 @@ int sspWriteFullsize(ssp_t *ssp)
 
 sspRet_t sspCloseToNet(ssp_t *ssp)
 {
+	sspWriteVersion(ssp);
 	sspWriteFullsize(ssp);
 
 	return(SSP_OK);
