@@ -160,7 +160,7 @@ int sampleSSPRead(void)
 
 	printf("Size read: [%zd]\n", readRet);
 
-	/* version = 0. Set version here is futile, we will read it from net */
+	/* version = 0. Set version here is futile, we will read it from net (sspStartFromNet()) */
 	ret = sspCtx(&myProto, 0, myFmt, SSP_QTD_FMT(myFmt), buffer, MYPROTO_MAX_SZ);
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
@@ -178,15 +178,36 @@ int sampleSSPRead(void)
 		unsigned char *rawData = NULL;
 		void *data = NULL;
 
-		ret = sspFetch(&myProto);
-		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
-
 		ret = sspGetRawDataField(&myProto, &szField, &idField, &rawData);
 		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
 		ret = sspGetDataField(&myProto, &szField, &idField, &data);
 		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
+		switch(idField){
+			case MYTYPE_ID_STRING:
+				//ret = sspUnpack(&myProto, idField, void *dataOut, size_t dataOutSz, size_t *proc);
+				break;
+
+			case MYTYPE_ID_CHAR:
+				break;
+
+			case MYTYPE_ID_MYTYPE:
+				break;
+
+			case MYTYPE_ID_FLOAT:
+				break;
+
+			case MYTYPE_ID_INT32:
+				break;
+
+			default:
+				printf("Unknow formmat\n");
+				break;
+		}
+
+		ret = sspFetch(&myProto);
+		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 	}
 
 	return(SAMPLE_SSP_OK);
