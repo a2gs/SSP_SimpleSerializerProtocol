@@ -34,6 +34,7 @@ typedef enum _sspRet_t{
 
 #define SSP_VERSION_TYPE	uint16_t
 #define SSP_FULLSIZE_TYPE	uint32_t
+
 #define SSP_FIELDSIZE_TYPE	uint32_t
 #define SSP_ID_TYPE			uint16_t
 
@@ -64,9 +65,12 @@ typedef struct _ssp_t{
 sspRet_t sspCtx(ssp_t *ssp, uint16_t version, sspFmt_t *format, unsigned qtdFmt, unsigned char *msg, size_t msgMaxSz);
 
 sspRet_t sspStartToNet(ssp_t *ssp);
-
 sspRet_t sspStartFromNet(ssp_t *ssp);
+
 sspRet_t sspStartFetch(ssp_t *ssp);
+sspRet_t sspFetch(ssp_t *ssp);
+sspRet_t sspGetRawDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, unsigned char **rawData);
+sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **rawData);
 
 sspRet_t sspSetVersion(ssp_t *ssp, uint16_t version);
 uint16_t sspGetVersion(ssp_t *ssp);

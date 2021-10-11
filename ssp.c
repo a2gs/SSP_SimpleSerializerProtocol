@@ -97,6 +97,24 @@ sspRet_t sspSetVersion(ssp_t *ssp, SSP_VERSION_TYPE version)
 	return(SSP_OK);
 }
 
+sspRet_t sspFetch(ssp_t *ssp)
+{
+
+	return(SSP_OK);
+}
+
+sspRet_t sspGetRawDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, unsigned char **rawData)
+{
+
+	return(SSP_OK);
+}
+
+sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **rawData)
+{
+
+	return(SSP_OK);
+}
+
 sspRet_t sspStartFetch(ssp_t *ssp)
 {
 	ssp->fetch.szFromNet = sspGetFullsizeFromNet(ssp);

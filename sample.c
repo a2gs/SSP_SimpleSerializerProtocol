@@ -173,28 +173,22 @@ int sampleSSPRead(void)
 	SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
 	for(i = 0; ; i++){
-		//ret = sspFetch(&myProto);
+		SSP_FIELDSIZE_TYPE szField;
+		SSP_ID_TYPE idField;
+		unsigned char *rawData = NULL;
+		void *data = NULL;
+
+		ret = sspFetch(&myProto);
+		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+		ret = sspGetRawDataField(&myProto, &szField, &idField, &rawData);
+		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
+		ret = sspGetDataField(&myProto, &szField, &idField, &data);
+		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
+
 	}
 
-
-
-
-
-
-
-
-
-	/*
-	reset ssp to receive (empty ssp->msg)
-
-	sspStartFetch(ssp_t *ssp)
-
-	sspUnpack(....);
-	sspUnpack(....);
-	sspUnpack(....);
-	sspUnpack(....);
-	sspUnpack(....);
-	*/
 	return(SAMPLE_SSP_OK);
 }
 
