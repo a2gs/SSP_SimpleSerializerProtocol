@@ -169,10 +169,10 @@ sspRet_t sspCloseToNet(ssp_t *ssp)
  * uint16_t ntohs(uint16_t netshort);
  */
 
-sspRet_t sspWriteFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fmtId, void *dataIn, size_t dataInSz)
+sspRet_t sspWriteFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, SSP_ID_TYPE fmtId, void *dataIn, size_t dataInSz)
 {
 	SSP_FIELDSIZE_TYPE szNetByteOrder = 0;
-	uint16_t idNetByteOrder = 0;
+	SSP_ID_TYPE idNetByteOrder = 0;
 	size_t sz = 0, szLeft = 0;
 	sspRet_t retFmt = SSP_ERROR;
 
@@ -192,11 +192,11 @@ sspRet_t sspWriteFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fm
 
 	/* write field id to buffer */
 	idNetByteOrder = htons(fmtId);
-	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(uint16_t));
+	memcpy(ssp->msgWalker, &idNetByteOrder, sizeof(SSP_ID_TYPE));
 
 	/* write field size to buffer */
 	szNetByteOrder = ntohl((uint32_t)sz);
-	memcpy(ssp->msgWalker + sizeof(uint16_t), &szNetByteOrder, sizeof(SSP_FIELDSIZE_TYPE));
+	memcpy(ssp->msgWalker + sizeof(SSP_ID_TYPE), &szNetByteOrder, sizeof(SSP_FIELDSIZE_TYPE));
 
 	/* write field data to buffer */
 	retFmt = ssp->format[fmtIndex].toNet(dataIn, dataInSz, ssp->msgWalker + SSP_SIZEOF_SZFMTID_SZFIELD, szLeft - SSP_SIZEOF_SZFMTID_SZFIELD, &sz);
@@ -208,7 +208,7 @@ sspRet_t sspWriteFmtIdSizeAndData(ssp_t *ssp, unsigned int fmtIndex, uint16_t fm
 	return(SSP_OK);
 }
 
-sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
+sspRet_t sspPack(ssp_t *ssp, SSP_ID_TYPE id, void *dataIn, size_t dataInSz)
 {
 	unsigned int i = 0;
 
@@ -230,7 +230,7 @@ sspRet_t sspPack(ssp_t *ssp, uint16_t id, void *dataIn, size_t dataInSz)
 	return(SSP_ERROR);
 }
 
-sspRet_t sspUnpack(ssp_t *ssp, uint16_t id, void *dataOut, size_t dataOutSz, size_t *proc)
+sspRet_t sspUnpack(ssp_t *ssp, SSP_ID_TYPE id, void *dataOut, size_t dataOutSz, size_t *proc)
 {
 	return(0);
 }
