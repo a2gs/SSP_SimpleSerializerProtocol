@@ -176,12 +176,14 @@ int sampleSSPRead(void)
 		SSP_FIELDSIZE_TYPE szField;
 		SSP_ID_TYPE idField;
 		unsigned char *rawData = NULL;
-		void *data = NULL;
+
+#define BUFFERDATA_SIZE (1000) // TODO
+		unsigned int bufferData[BUFFERDATA_SIZE]; // TODO
 
 		ret = sspGetRawDataField(&myProto, &szField, &idField, &rawData);
 		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
-		ret = sspGetDataField(&myProto, &szField, &idField, &data);
+		ret = sspGetDataField(&myProto, &szField, &idField, (void *)&bufferData, BUFFERDATA_SIZE);
 		SAMPLE_SSP_COMMON_RETURNING_CHECK(ret);
 
 		switch(idField){

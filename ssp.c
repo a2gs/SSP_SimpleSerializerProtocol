@@ -99,20 +99,60 @@ sspRet_t sspSetVersion(ssp_t *ssp, SSP_VERSION_TYPE version)
 
 sspRet_t sspFetch(ssp_t *ssp)
 {
+	SSP_FIELDSIZE_TYPE szNetOrder = 0;
+	SSP_FIELDSIZE_TYPE sz = 0;
+
+	memcpy(&szNetOrder, ssp->fetch.fetchWalker + sizeof(SSP_ID_TYPE), sizeof(SSP_FIELDSIZE_TYPE));
+
+	sz = ntohl(szNetOrder);
+
+	ssp->fetch.fetchWalker += sizeof(SSP_ID_TYPE) + sizeof(SSP_FIELDSIZE_TYPE) + sz;
 
 	return(SSP_OK);
 }
 
 sspRet_t sspGetRawDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, unsigned char **rawData)
 {
+	SSP_ID_TYPE idNetOrder = 0;
+	SSP_FIELDSIZE_TYPE szNetOrder = 0;
+
+	memcpy(&idNetOrder, ssp->fetch.fetchWalker, sizeof(SSP_ID_TYPE));
+	memcpy(&szNetOrder, ssp->fetch.fetchWalker + sizeof(SSP_ID_TYPE), sizeof(SSP_FIELDSIZE_TYPE));
+
+	*idField = ntohs(idNetOrder);
+	*szField = ntohl(szNetOrder);
+
+	*rawData = ssp->fetch.fetchWalker + sizeof(SSP_ID_TYPE) + sizeof(SSP_FIELDSIZE_TYPE);
 
 	return(SSP_OK);
 }
 
-sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **rawData)
+sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **data, size_t dataSz)
 {
+	unsigned int i = 0;
+	unsigned char *rawData = NULL;
+	size_t proc = 0;
+	SSP_ID_TYPE idFromMsg = 0;
+	SSP_FIELDSIZE_TYPE szFromMsg = 0;
 
-	return(SSP_OK);
+	if(sspGetRawDataField(ssp, &szFromMsg, &idFromMsg, &rawData) == SSP_ERROR)
+		return(SSP_ERROR);
+
+	for(i = 0; i < ssp->qtdFmt; i++){
+		if(ssp->format[i].id == idFromMsg){
+
+			DEBUG("format matches: %d\n", idFromMsg);
+
+			if(ssp->format[i].fromNet(rawData, szFromMsg, data, dataSz, &proc) == SSP_ERROR){
+				return(SSP_ERROR);
+			}
+
+			return(SSP_OK);
+		}
+	}
+
+	DEBUG("format not found\n");
+	return(SSP_ERROR);
 }
 
 sspRet_t sspStartFetch(ssp_t *ssp)

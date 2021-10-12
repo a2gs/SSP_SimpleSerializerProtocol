@@ -70,7 +70,7 @@ sspRet_t sspStartFromNet(ssp_t *ssp);
 sspRet_t sspStartFetch(ssp_t *ssp);
 sspRet_t sspFetch(ssp_t *ssp);
 sspRet_t sspGetRawDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, unsigned char **rawData);
-sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **rawData);
+sspRet_t sspGetDataField(ssp_t *ssp, SSP_FIELDSIZE_TYPE *szField, SSP_ID_TYPE *idField, void **data, size_t szData);
 
 sspRet_t sspSetVersion(ssp_t *ssp, uint16_t version);
 uint16_t sspGetVersion(ssp_t *ssp);
