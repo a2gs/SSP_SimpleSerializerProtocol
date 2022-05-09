@@ -25,7 +25,7 @@ all: clean libssp
 libssp:
 	@echo
 	@echo "=== Code sanitizing =============="
-	-ctags -R *
+	-ctags -R --exclude=.git *
 	-cscope -b -R
 	-$(CPPCHECK) --enable=all --std=$(CVERSION) --platform=unix64 --language=c --check-config --suppress=missingIncludeSystem .
 
